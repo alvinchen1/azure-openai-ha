@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import base64
-from mimetypes import guess_file_type
+from mimetypes import guess_type
 from pathlib import Path
 
 import openai
@@ -62,15 +62,13 @@ CONFIG_SCHEMA = cv.config_entry_only_config_schema(DOMAIN)
 
 type OpenAIConfigEntry = ConfigEntry[openai.AsyncClient]
 
-
 def encode_file(file_path: str) -> tuple[str, str]:
     """Return base64 version of file contents."""
-    mime_type, _ = guess_file_type(file_path)
+    mime_type, _ = guess_type(file_path)
     if mime_type is None:
         mime_type = "application/octet-stream"
     with open(file_path, "rb") as image_file:
         return (mime_type, base64.b64encode(image_file.read()).decode("utf-8"))
-
 
 async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
     """Set up Azure OpenAI Conversation."""
